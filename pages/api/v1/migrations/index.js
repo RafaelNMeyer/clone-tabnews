@@ -4,35 +4,49 @@ import database from 'infra/database';
 
 export default async function migrations(request, response) {
 
-  const dbClient = await database.getNewClient();
+  const allowedMethods = ["GET", "POST"];
 
-  const defaultMigrationsOptions = {
-    dbClient,
-    dryRun: true,
-    dir: join("infra", "migrations"),
-    direction: "up",
-    verbose: true,
-    migrationsTable: "pgmigrations",
-  }
-
-  if (request.method === "GET") {
-    const pendingMigrations = await migrationRunner(defaultMigrationsOptions);
-    await dbClient.end();
-    response.status(200).json(pendingMigrations);
-  }
-
-  if (request.method === "POST") {
-    const migratedMigrations = await migrationRunner({
-      ...defaultMigrationsOptions,
-      dryRun: false,
+  if (!allowedMethods.includes(request.method))
+    response.status(405).json({
+      error: `Method "${request.method}" now allowed`,
     });
 
-    await dbClient.end();
+  let dbClient;
 
-    if (migratedMigrations.length > 0) {
-      response.status(201).json(migratedMigrations);
+  try {
+    dbClient = await database.getNewClient();
+
+    const defaultMigrationsOptions = {
+      dbClient,
+      dryRun: true,
+      dir: join("infra", "migrations"),
+      direction: "up",
+      verbose: true,
+      migrationsTable: "pgmigrations",
     }
-    response.status(200).json(migratedMigrations);
+
+    if (request.method === "GET") {
+      const pendingMigrations = await migrationRunner(defaultMigrationsOptions);
+      response.status(200).json(pendingMigrations);
+    }
+
+    if (request.method === "POST") {
+      const migratedMigrations = await migrationRunner({
+        ...defaultMigrationsOptions,
+        dryRun: false,
+      });
+
+      if (migratedMigrations.length > 0)
+        return response.status(201).json(migratedMigrations);
+
+      return response.status(200).json(migratedMigrations);
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
-  response.status(405).end();
+  finally {
+    await dbClient.end();
+  }
+
 }
