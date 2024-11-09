@@ -1,7 +1,7 @@
-# Deploy..
+# Deploy
 
 https://clone-tabnews-two.vercel.app/
 
-# clone-tabnews..
+# clone-tabnews
 
-Implementação do https://www.tabnews.com.br/ para o curso https://curso.dev/ !!
+https://www.tabnews.com.br/ implementation for https://curso.dev/
