@@ -1,4 +1,4 @@
-import styles from './Status.module.css'
+import styles from "./Status.module.css";
 
 function Status({ isLoading, data }) {
   let updated_at = data ? data.updated_at : "";
@@ -9,36 +9,37 @@ function Status({ isLoading, data }) {
   return (
     <>
       <div className={styles.container}>
-        {!isLoading ?
+        {!isLoading ? (
           <div className={styles.board}>
             <div className={styles.subject}>
               <h1> Status </h1>
               <div className={styles.prop}>
-                <div className='field'> Last update:</div>
-                <div className='value'> {updated_at_formatted}</div>
+                <div className="field"> Last update:</div>
+                <div className="value"> {updated_at_formatted}</div>
               </div>
             </div>
             <div className={styles.subject}>
               <h1> Database </h1>
               <div className={styles.prop}>
-                <div className='field'>Database version:</div>
-                <div className='value'>{db_version}</div>
+                <div className="field">Database version:</div>
+                <div className="value">{db_version}</div>
               </div>
               <div className={styles.prop}>
-                <div className='field'>Max connections:</div>
-                <div className='value'>{max_connections}</div>
+                <div className="field">Max connections:</div>
+                <div className="value">{max_connections}</div>
               </div>
               <div className={styles.prop}>
-                <div className='field'>Active connections:</div>
-                <div className='value'>{active_connections}</div>
+                <div className="field">Active connections:</div>
+                <div className="value">{active_connections}</div>
               </div>
             </div>
           </div>
-          : <div> Loading... </div>
-        }
+        ) : (
+          <div> Loading... </div>
+        )}
       </div>
     </>
-  )
-};
+  );
+}
 
 export default Status;

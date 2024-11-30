@@ -11,13 +11,12 @@
   padding: 10px;
   border: 1px solid black;
   border-radius: 5px;
-  display:flex;
+  display: flex;
   flex-direction: column;
   gap: 10px;
   background: #b3ffad;
-  margin-bottom: 20%;
   .subject {
-    display:flex;
+    display: flex;
     flex-direction: column;
     gap: 5px;
   }
@@ -28,7 +27,7 @@
   border: 1px solid black;
   border-radius: 5px;
   background: #dbdbdb;
-  display:flex;
+  display: flex;
   flex-direction: column;
   gap: 5px;
   align-items: center;
