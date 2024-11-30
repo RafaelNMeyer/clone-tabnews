@@ -1,0 +1,35 @@
+.container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fbfbfb;
+  font-family: monospace;
+}
+
+.board {
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #b3ffad;
+  margin-bottom: 20%;
+  .subject {
+    display:flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+
+.prop {
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+  background: #dbdbdb;
+  display:flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+}
