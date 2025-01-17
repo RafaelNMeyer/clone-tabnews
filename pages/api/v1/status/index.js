@@ -1,36 +1,50 @@
+import { createRouter } from "next-connect";
 import database from "infra/database.js";
-import { InternalServerError } from "infra/errors.js";
+import { InternalServerError, MethodNotAllowedError } from "infra/errors.js";
 
-async function status(request, response) {
-  try {
-    const updatedAt = new Date().toISOString();
+const router = createRouter();
 
-    const dbVersion = await database.query("SHOW server_version;");
-    const dbVersionValue = dbVersion.rows[0].server_version;
+router.get(getHandler);
 
-    const maxConnections = await database.query("SHOW max_connections;");
-    const maxConnectionsValue = maxConnections.rows[0].max_connections;
+export default router.handler({
+  onNoMatch: onNoMatchHandler,
+  onError: onErrorHandler,
+});
 
-    const dbName = process.env.POSTGRES_DB;
-    const activeConnections = await database.query({
-      text: "SELECT count(*)::int from pg_stat_activity WHERE datname = $1; --AND state='active';",
-      values: [dbName],
-    });
-    const activeConnectionsValue = activeConnections.rows[0].count;
-
-    response.status(200).json({
-      updated_at: updatedAt,
-      db_version: dbVersionValue,
-      max_connections: parseInt(maxConnectionsValue),
-      active_connections: activeConnectionsValue,
-    });
-  } catch (err) {
-    const publicErrorObject = new InternalServerError({
-      cause: err,
-    });
-    console.log(publicErrorObject);
-    response.status(500).json(publicErrorObject);
-  }
+function onNoMatchHandler(request, response) {
+  const publicError = new MethodNotAllowedError({});
+  response.status(publicError.status_code).json(publicError);
 }
 
-export default status;
+function onErrorHandler(err, request, response) {
+  console.log("error inside next-connect");
+  const publicErrorObject = new InternalServerError({
+    cause: err,
+  });
+  console.error(publicErrorObject);
+  response.status(500).json(publicErrorObject);
+}
+
+async function getHandler(request, response) {
+  const updatedAt = new Date().toISOString();
+
+  const dbVersion = await database.query("SHOW server_version;");
+  const dbVersionValue = dbVersion.rows[0].server_version;
+
+  const maxConnections = await database.query("SHOW max_connections;");
+  const maxConnectionsValue = maxConnections.rows[0].max_connections;
+
+  const dbName = process.env.POSTGRES_DB;
+  const activeConnections = await database.query({
+    text: "SELECT count(*)::int from pg_stat_activity WHERE datname = $1; --AND state='active';",
+    values: [dbName],
+  });
+  const activeConnectionsValue = activeConnections.rows[0].count;
+
+  response.status(200).json({
+    updated_at: updatedAt,
+    db_version: dbVersionValue,
+    max_connections: parseInt(maxConnectionsValue),
+    active_connections: activeConnectionsValue,
+  });
+}
