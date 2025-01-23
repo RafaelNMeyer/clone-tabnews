@@ -17,11 +17,10 @@ function onNoMatchHandler(request, response) {
 }
 
 function onErrorHandler(err, request, response) {
-  console.log("error inside next-connect");
   const publicErrorObject = new InternalServerError({
     cause: err,
   });
-  console.error(publicErrorObject);
+  console.log(publicErrorObject);
   response.status(500).json(publicErrorObject);
 }
 
