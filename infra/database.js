@@ -1,4 +1,5 @@
 import { Client } from "pg";
+import { ServiceError } from "./errors.js";
 
 async function query(queryObject) {
   let client;
@@ -7,8 +8,11 @@ async function query(queryObject) {
     const result = await client.query(queryObject);
     return result;
   } catch (err) {
-    console.log(err);
-    throw err;
+    const serviceErrorObject = new ServiceError({
+      message: "Connection with database error or Query error.",
+      cause: err,
+    });
+    throw serviceErrorObject;
   } finally {
     await client?.end();
   }
