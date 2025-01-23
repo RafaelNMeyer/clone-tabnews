@@ -10,11 +10,18 @@ router.get(getHandler).post(postHandler);
 
 export default router.handler({
   onNoMatch: onNoMatchHandler,
+  onError: onErrorHandler,
 });
 
 function onNoMatchHandler(request, response) {
   const publicError = new MethodNotAllowedError({});
   console.error(publicError);
+  response.status(publicError.status_code).json(publicError);
+}
+
+function onErrorHandler(err, request, response) {
+  const publicError = new InternalServerError({ cause: err });
+  console.log(publicError);
   response.status(publicError.status_code).json(publicError);
 }
 
@@ -38,10 +45,6 @@ async function getHandler(request, response) {
     });
 
     response.status(200).json(pendingMigrations);
-  } catch (err) {
-    const publicError = new InternalServerError({ cause: err });
-    console.log(publicError);
-    response.status(publicError.status_code).json(publicError);
   } finally {
     await dbClient?.end();
   }
@@ -63,10 +66,6 @@ async function postHandler(request, response) {
       response.status(201).json(migratedMigrations);
 
     response.status(200).json(migratedMigrations);
-  } catch (err) {
-    const publicError = new InternalServerError({ cause: err });
-    console.log(publicError);
-    response.status(publicError.status_code).json(publicError);
   } finally {
     await dbClient?.end();
   }
