@@ -22,7 +22,6 @@ async function listPendingMigrations() {
     });
 
     return pendingMigrations;
-
   } finally {
     await dbClient?.end();
   }
@@ -41,7 +40,6 @@ async function runPendingMigrations() {
     });
 
     return migratedMigrations;
-
   } finally {
     await dbClient?.end();
   }
@@ -49,7 +47,7 @@ async function runPendingMigrations() {
 
 const migrator = {
   listPendingMigrations,
-  runPendingMigrations
-}
+  runPendingMigrations,
+};
 
 export default migrator;
